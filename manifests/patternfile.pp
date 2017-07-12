@@ -1,4 +1,4 @@
-# == Define: logstash::patternfile
+# == Define: logstash_legacy::patternfile
 #
 # This define allows you to transport custom pattern files to the Logstash instance
 #
@@ -21,13 +21,13 @@
 #
 # === Examples
 #
-#     logstash::patternfile { 'mypattern':
+#     logstash_legacy::patternfile { 'mypattern':
 #       source => 'puppet:///path/to/my/custom/pattern'
 #     }
 #
 #     or wil an other actual file name
 #
-#     logstash::patternfile { 'mypattern':
+#     logstash_legacy::patternfile { 'mypattern':
 #       source   => 'puppet:///path/to/my/custom/pattern_v1',
 #       filename => 'custom_pattern'
 #     }
@@ -38,12 +38,12 @@
 # * Justin Lambert
 # * Richard Pijnenburg <mailto:richard.pijnenburg@elasticsearch.com>
 #
-define logstash::patternfile (
+define logstash_legacy::patternfile (
   $source,
   $filename = undef,
 )
 {
-  require logstash::config
+  require logstash_legacy::config
 
   validate_re($source, '^(puppet|file)://', 'Source must be either from a puppet fileserver or a locally accessible file (begins with either puppet:// or file://)' )
 
@@ -52,11 +52,11 @@ define logstash::patternfile (
     default => $filename
   }
 
-  file { "${logstash::patterndir}/${filename_real}":
+  file { "${logstash_legacy::patterndir}/${filename_real}":
     ensure => file,
     source => $source,
-    owner  => $logstash::logstash_user,
-    group  => $logstash::logstash_group,
+    owner  => $logstash_legacy::logstash_user,
+    group  => $logstash_legacy::logstash_group,
     mode   => '0644',
     tag    => ['logstash_config'],
   }

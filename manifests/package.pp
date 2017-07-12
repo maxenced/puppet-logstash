@@ -1,4 +1,4 @@
-# == Class: logstash::package
+# == Class: logstash_legacy::package
 #
 # This class exists to coordinate all software package management related
 # actions, functionality and logical units in a central place.
@@ -12,7 +12,7 @@
 # === Examples
 #
 # This class may be imported by other classes to use its functionality:
-#   class { 'logstash::package': }
+#   class { 'logstash_legacy::package': }
 #
 # It is not intended to be used directly by external resources like node
 # definitions or other modules.
@@ -22,7 +22,7 @@
 #
 # * Richard Pijnenburg <mailto:richard.pijnenburg@elasticsearch.com>
 #
-class logstash::package {
+class logstash_legacy::package {
 
   Exec {
     path      => [ '/bin', '/usr/bin', '/usr/local/bin' ],
@@ -34,25 +34,25 @@ class logstash::package {
   #### Package management
 
   # set params: in operation
-  if $logstash::ensure == 'present' {
+  if $logstash_legacy::ensure == 'present' {
 
     # action
-    if ($logstash::package_url != undef) {
+    if ($logstash_legacy::package_url != undef) {
 
-      $package_dir = $logstash::package_dir
+      $package_dir = $logstash_legacy::package_dir
 
       # Create directory to place the package file
       exec { 'create_package_dir_logstash':
         cwd     => '/',
         path    => ['/usr/bin', '/bin'],
-        command => "mkdir -p ${logstash::package_dir}",
-        creates => $logstash::package_dir;
+        command => "mkdir -p ${logstash_legacy::package_dir}",
+        creates => $logstash_legacy::package_dir;
       }
 
       file { $package_dir:
         ensure  => 'directory',
-        purge   => $logstash::purge_package_dir,
-        force   => $logstash::purge_package_dir,
+        purge   => $logstash_legacy::purge_package_dir,
+        force   => $logstash_legacy::purge_package_dir,
         backup  => false,
         require => Exec['create_package_dir_logstash'],
       }
@@ -60,7 +60,7 @@ class logstash::package {
     }
 
   } else { # Package removal
-    $package_dir = $logstash::package_dir
+    $package_dir = $logstash_legacy::package_dir
 
     file { $package_dir:
       ensure => 'absent',
@@ -71,10 +71,10 @@ class logstash::package {
 
   }
 
-  #class { 'logstash::package::core': }
-  logstash::package::install { 'logstash':
-    package_url  => $logstash::package_url,
-    version      => $logstash::version,
-    package_name => $logstash::package_name,
+  #class { 'logstash_legacy::package::core': }
+  logstash_legacy::package::install { 'logstash':
+    package_url  => $logstash_legacy::package_url,
+    version      => $logstash_legacy::version,
+    package_name => $logstash_legacy::package_name,
   }
 }

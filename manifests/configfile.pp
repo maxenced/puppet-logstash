@@ -1,4 +1,4 @@
-# == define: logstash::configfile
+# == define: logstash_legacy::configfile
 #
 # This define is to manage the config files for Logstah
 #
@@ -17,21 +17,21 @@
 #
 #     Set config file content with a literal value:
 #
-#     logstash::configfile { 'apache':
+#     logstash_legacy::configfile { 'apache':
 #       content => "",
 #       order   => 10
 #     }
 #
 #     or with a puppet file source:
 #
-#     logstash::configfile { 'apache':
+#     logstash_legacy::configfile { 'apache':
 #       source => 'puppet://path/to/apache.conf',
 #       order  => 10
 #     }
 #
 #     or with template (useful with Hiera):
 #
-#     logstash::configfile { 'apache':
+#     logstash_legacy::configfile { 'apache':
 #       template => "${module_name}/path/to/apache.conf.erb",
 #       order   => 10
 #     }
@@ -40,7 +40,7 @@
 #
 # * Richard Pijnenburg <mailto:richard.pijnenburg@elasticsearch.com>
 #
-define logstash::configfile(
+define logstash_legacy::configfile(
   $content = undef,
   $source = undef,
   $order = 10,

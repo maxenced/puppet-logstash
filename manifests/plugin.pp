@@ -4,31 +4,31 @@
 # to install from a local Gem, or one stored in Puppet.
 #
 # @example install a plugin
-#   logstash::plugin { 'logstash-input-stdin': }
+#   logstash_legacy::plugin { 'logstash-input-stdin': }
 #
 # @example remove a plugin
-#   logstash::plugin { 'logstash-input-stout':
+#   logstash_legacy::plugin { 'logstash-input-stout':
 #     ensure => absent,
 #   }
 #
 # @example install a plugin from a local file
-#   logstash::plugin { 'logstash-input-custom':
+#   logstash_legacy::plugin { 'logstash-input-custom':
 #     source => 'file:///tmp/logstash-input-custom.gem',
 #   }
 #
 # @example install a plugin from a Puppet module.
-#   logstash::plugin { 'logstash-input-custom':
+#   logstash_legacy::plugin { 'logstash-input-custom':
 #     source => 'puppet:///modules/logstash-site-plugins/logstash-input-custom.gem',
 #   }
 #
 # @param source [String] install from this file, not from RubyGems.
 #
-define logstash::plugin (
+define logstash_legacy::plugin (
   $source = undef,
   $ensure = present,
 )
 {
-  require logstash::package
+  require logstash_legacy::package
   $exe = '/opt/logstash/bin/plugin'
 
   # Install plugin as logstash user and make
@@ -36,7 +36,7 @@ define logstash::plugin (
   Exec {
     path => '/bin:/usr/bin',
   }
-  $exe_prefix = "su - '${::logstash::logstash_user}' -s /bin/bash -c '"
+  $exe_prefix = "su - '${::logstash_legacy::logstash_user}' -s /bin/bash -c '"
   $exe_suffix = "'"
 
   case $source { # Where should we get the plugin from?

@@ -1,4 +1,4 @@
-# == Class: logstash::repo
+# == Class: logstash_legacy::repo
 #
 # This class exists to install and manage yum and apt repositories
 # that contain logstash official logstash packages
@@ -12,7 +12,7 @@
 # === Examples
 #
 # This class may be imported by other classes to use its functionality:
-#   class { 'logstash::repo': }
+#   class { 'logstash_legacy::repo': }
 #
 # It is not intended to be used directly by external resources like node
 # definitions or other modules.
@@ -24,7 +24,7 @@
 # * Richard Pijnenburg <mailto:richard.pijnenburg@elasticsearch.com>
 # * Matthias Baur <mailto:matthias.baur@dmc.de>
 #
-class logstash::repo {
+class logstash_legacy::repo {
 
   Exec {
     path      => [ '/bin', '/usr/bin', '/usr/local/bin' ],
@@ -36,7 +36,7 @@ class logstash::repo {
       require apt
 
       apt::source { 'logstash':
-        location => "http://packages.elasticsearch.org/logstash/${logstash::repo_version}/debian",
+        location => "http://packages.elasticsearch.org/logstash/${logstash_legacy::repo_version}/debian",
         release  => 'stable',
         repos    => 'main',
         key      => {
@@ -54,7 +54,7 @@ class logstash::repo {
     'RedHat': {
       yumrepo { 'logstash':
         descr    => 'Logstash Centos Repo',
-        baseurl  => "http://packages.elasticsearch.org/logstash/${logstash::repo_version}/centos",
+        baseurl  => "http://packages.elasticsearch.org/logstash/${logstash_legacy::repo_version}/centos",
         gpgcheck => 1,
         gpgkey   => 'http://packages.elasticsearch.org/GPG-KEY-elasticsearch',
         enabled  => 1,
@@ -80,7 +80,7 @@ class logstash::repo {
       }
 
       zypprepo { 'logstash':
-        baseurl     => "http://packages.elasticsearch.org/logstash/${logstash::repo_version}/${centos_version}/",
+        baseurl     => "http://packages.elasticsearch.org/logstash/${logstash_legacy::repo_version}/${centos_version}/",
         enabled     => 1,
         autorefresh => 1,
         name        => 'logstash',

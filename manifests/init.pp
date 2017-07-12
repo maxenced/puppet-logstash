@@ -59,7 +59,7 @@
 #   Defaults to <tt>true</tt>, which will restart the application on any config
 #   change. Setting to <tt>false</tt> disables the automatic restart.
 #
-# The default values for the parameters are set in logstash::params. Have
+# The default values for the parameters are set in logstash_legacy::params. Have
 # a look at the corresponding <tt>params.pp</tt> manifest file if you need more
 # technical information about them.
 #
@@ -150,22 +150,22 @@
 #
 # * Richard Pijnenburg <mailto:richard.pijnenburg@elasticsearch.com>
 #
-class logstash(
-  $ensure              = $logstash::params::ensure,
-  $status              = $logstash::params::status,
-  $restart_on_change   = $logstash::params::restart_on_change,
-  $autoupgrade         = $logstash::params::autoupgrade,
+class logstash_legacy(
+  $ensure              = $logstash_legacy::params::ensure,
+  $status              = $logstash_legacy::params::status,
+  $restart_on_change   = $logstash_legacy::params::restart_on_change,
+  $autoupgrade         = $logstash_legacy::params::autoupgrade,
   $version             = false,
   $software_provider   = 'package',
   $package_url         = undef,
-  $package_dir         = $logstash::params::package_dir,
-  $package_name        = $logstash::params::package_name,
-  $purge_package_dir   = $logstash::params::purge_package_dir,
-  $package_dl_timeout  = $logstash::params::package_dl_timeout,
-  $logstash_user       = $logstash::params::logstash_user,
-  $logstash_group      = $logstash::params::logstash_group,
-  $configdir           = $logstash::params::configdir,
-  $purge_configdir     = $logstash::params::purge_configdir,
+  $package_dir         = $logstash_legacy::params::package_dir,
+  $package_name        = $logstash_legacy::params::package_name,
+  $purge_package_dir   = $logstash_legacy::params::purge_package_dir,
+  $package_dl_timeout  = $logstash_legacy::params::package_dl_timeout,
+  $logstash_user       = $logstash_legacy::params::logstash_user,
+  $logstash_group      = $logstash_legacy::params::logstash_group,
+  $configdir           = $logstash_legacy::params::configdir,
+  $purge_configdir     = $logstash_legacy::params::purge_configdir,
   $java_install        = false,
   $java_package        = undef,
   $service_provider    = 'init',
@@ -173,11 +173,11 @@ class logstash(
   $init_defaults_file  = undef,
   $init_template       = undef,
   $manage_repo         = false,
-  $repo_version        = $logstash::params::repo_version,
-) inherits logstash::params {
+  $repo_version        = $logstash_legacy::params::repo_version,
+) inherits logstash_legacy::params {
 
-  anchor {'logstash::begin': }
-  anchor {'logstash::end': }
+  anchor {'logstash_legacy::begin': }
+  anchor {'logstash_legacy::end': }
 
   #### Validate parameters
 
@@ -205,7 +205,7 @@ class logstash(
   # purge conf dir
   validate_bool($purge_configdir)
 
-  if ! ($service_provider in $logstash::params::service_providers) {
+  if ! ($service_provider in $logstash_legacy::params::service_providers) {
     fail("\"${service_provider}\" is not a valid provider for \"${::operatingsystem}\"")
   }
 
@@ -222,29 +222,29 @@ class logstash(
   #### Manage actions
 
   # package(s)
-  class { 'logstash::package': }
+  class { 'logstash_legacy::package': }
 
   # configuration
-  class { 'logstash::config': }
+  class { 'logstash_legacy::config': }
 
   # service(s)
-  class { 'logstash::service': }
+  class { 'logstash_legacy::service': }
 
   if $java_install == true {
     # Install java
-    class { 'logstash::java': }
+    class { 'logstash_legacy::java': }
 
     # ensure we first install java and then manage the service
-    Anchor['logstash::begin']
-    -> Class['logstash::java']
-    -> Class['logstash::package']
+    Anchor['logstash_legacy::begin']
+    -> Class['logstash_legacy::java']
+    -> Class['logstash_legacy::package']
   }
 
   if ($manage_repo == true) {
     # Set up repositories
-    # The order (repository before packages) is managed within logstash::repo
+    # The order (repository before packages) is managed within logstash_legacy::repo
     # We can't use the anchor or stage pattern here, since it breaks other modules also depending on the apt class
-    include logstash::repo
+    include logstash_legacy::repo
   }
 
   #### Manage relationships
@@ -252,23 +252,23 @@ class logstash(
   if $ensure == 'present' {
 
     # we need the software before configuring it
-    Anchor['logstash::begin']
-    -> Class['logstash::package']
-    -> Class['logstash::config']
+    Anchor['logstash_legacy::begin']
+    -> Class['logstash_legacy::package']
+    -> Class['logstash_legacy::config']
 
     # we need the software and a working configuration before running a service
-    Class['logstash::package'] -> Class['logstash::service']
-    Class['logstash::config']  -> Class['logstash::service']
+    Class['logstash_legacy::package'] -> Class['logstash::service']
+    Class['logstash_legacy::config']  -> Class['logstash::service']
 
-    Class['logstash::service'] -> Anchor['logstash::end']
+    Class['logstash_legacy::service'] -> Anchor['logstash::end']
 
   } else {
 
     # make sure all services are getting stopped before software removal
-    Anchor['logstash::begin']
-    -> Class['logstash::service']
-    -> Class['logstash::package']
-    -> Anchor['logstash::end']
+    Anchor['logstash_legacy::begin']
+    -> Class['logstash_legacy::service']
+    -> Class['logstash_legacy::package']
+    -> Anchor['logstash_legacy::end']
 
   }
 }
