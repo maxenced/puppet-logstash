@@ -1,4 +1,4 @@
-# == Define: logstash::package::install
+# == Define: logstash_legacy::package::install
 #
 # This class exists to coordinate all software package management related
 # actions, functionality and logical units in a central place.
@@ -17,7 +17,7 @@
 # === Examples
 #
 # This class may be imported by other classes to use its functionality:
-#   class { 'logstash::package': }
+#   class { 'logstash_legacy::package': }
 #
 # It is not intended to be used directly by external resources like node
 # definitions or other modules.
@@ -27,7 +27,7 @@
 #
 # * Richard Pijnenburg <mailto:richard.pijnenburg@elasticsearch.com>
 #
-define logstash::package::install(
+define logstash_legacy::package::install(
   $package_url = undef,
   $version = undef,
   $package_name = undef,
@@ -43,12 +43,12 @@ define logstash::package::install(
   #### Package management
 
   # set params: in operation
-  if $logstash::ensure == 'present' {
+  if $logstash_legacy::ensure == 'present' {
 
     # Check if we want to install a specific version or not
     if $version == false {
 
-      $package_ensure = $logstash::autoupgrade ? {
+      $package_ensure = $logstash_legacy::autoupgrade ? {
         true  => 'latest',
         false => 'present',
       }
@@ -63,12 +63,12 @@ define logstash::package::install(
     # action
     if ($package_url != undef) {
 
-      case $logstash::software_provider {
+      case $logstash_legacy::software_provider {
         'package': { $before = Package[$name]  }
-        default:   { fail("software provider \"${logstash::software_provider}\".") }
+        default:   { fail("software provider \"${logstash_legacy::software_provider}\".") }
       }
 
-      $package_dir = $logstash::package_dir
+      $package_dir = $logstash_legacy::package_dir
 
       $filenameArray = split($package_url, '/')
       $basefilename = $filenameArray[-1]
@@ -97,10 +97,10 @@ define logstash::package::install(
         'ftp', 'https', 'http': {
 
           exec { "download_package_logstash_${name}":
-            command => "${logstash::params::download_tool} ${pkg_source} ${package_url} 2> /dev/null",
+            command => "${logstash_legacy::params::download_tool} ${pkg_source} ${package_url} 2> /dev/null",
             path    => ['/usr/bin', '/bin'],
             creates => $pkg_source,
-            timeout => $logstash::package_dl_timeout,
+            timeout => $logstash_legacy::package_dl_timeout,
             require => File[$package_dir],
             before  => $before,
           }
@@ -124,7 +124,7 @@ define logstash::package::install(
         }
       }
 
-      if ($logstash::software_provider == 'package') {
+      if ($logstash_legacy::software_provider == 'package') {
 
         case $ext {
           'deb':   { $pkg_provider = 'dpkg'  }
@@ -150,7 +150,7 @@ define logstash::package::install(
 
   }
 
-  if ($logstash::software_provider == 'package') {
+  if ($logstash_legacy::software_provider == 'package') {
 
     package { $name:
       ensure   => $package_ensure,
@@ -161,7 +161,7 @@ define logstash::package::install(
     }
 
   } else {
-    fail("\"${logstash::software_provider}\" is not supported")
+    fail("\"${logstash_legacy::software_provider}\" is not supported")
   }
 
 }

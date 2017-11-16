@@ -257,10 +257,10 @@ class logstash_legacy(
     -> Class['logstash_legacy::config']
 
     # we need the software and a working configuration before running a service
-    Class['logstash_legacy::package'] -> Class['logstash::service']
-    Class['logstash_legacy::config']  -> Class['logstash::service']
+    Class['logstash_legacy::package'] -> Class['logstash_legacy::service']
+    Class['logstash_legacy::config']  -> Class['logstash_legacy::service']
 
-    Class['logstash_legacy::service'] -> Anchor['logstash::end']
+    Class['logstash_legacy::service'] -> Anchor['logstash_legacy::end']
 
   } else {
 

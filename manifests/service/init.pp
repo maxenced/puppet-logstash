@@ -1,4 +1,4 @@
-# == Define: logstash::service::init
+# == Define: logstash_legacy::service::init
 #
 # This class exists to coordinate all service management related actions,
 # functionality and logical units in a central place.
@@ -19,14 +19,14 @@
 #
 # * Richard Pijnenburg <mailto:richard.pijnenburg@elasticsearch.com>
 #
-define logstash::service::init{
+define logstash_legacy::service::init{
 
   #### Service management
 
   # set params: in operation
-  if $logstash::ensure == 'present' {
+  if $logstash_legacy::ensure == 'present' {
 
-    case $logstash::status {
+    case $logstash_legacy::status {
       # make sure service is currently running, start it on boot
       'enabled': {
         $service_ensure = 'running'
@@ -52,7 +52,7 @@ define logstash::service::init{
       # note: don't forget to update the parameter check in init.pp if you
       #       add a new or change an existing status.
       default: {
-        fail("\"${logstash::status}\" is an unknown service status value")
+        fail("\"${logstash_legacy::status}\" is an unknown service status value")
       }
     }
 
@@ -66,19 +66,19 @@ define logstash::service::init{
 
   }
 
-  $notify_service = $logstash::restart_on_change ? {
+  $notify_service = $logstash_legacy::restart_on_change ? {
     true  => Service[$name],
     false => undef,
   }
 
 
-  if ( $logstash::status != 'unmanaged' ) {
+  if ( $logstash_legacy::status != 'unmanaged' ) {
 
     # defaults file content. Either from a hash or file
-    if ($logstash::init_defaults_file != undef) {
+    if ($logstash_legacy::init_defaults_file != undef) {
       $defaults_content = undef
-      $defaults_source  = $logstash::init_defaults_file
-    } elsif ($logstash::init_defaults != undef and is_hash($logstash::init_defaults) ) {
+      $defaults_source  = $logstash_legacy::init_defaults_file
+    } elsif ($logstash_legacy::init_defaults != undef and is_hash($logstash_legacy::init_defaults) ) {
       $defaults_content = template("${module_name}/etc/sysconfig/defaults.erb")
       $defaults_source  = undef
     } else {
@@ -89,8 +89,8 @@ define logstash::service::init{
     # Check if we are going to manage the defaults file.
     if ( $defaults_content != undef or $defaults_source != undef ) {
 
-      file { "${logstash::params::defaults_location}/${name}":
-        ensure  => $logstash::ensure,
+      file { "${logstash_legacy::params::defaults_location}/${name}":
+        ensure  => $logstash_legacy::ensure,
         source  => $defaults_source,
         content => $defaults_content,
         owner   => 'root',
@@ -103,11 +103,11 @@ define logstash::service::init{
     }
 
     # init file from template
-    if ($logstash::init_template != undef) {
+    if ($logstash_legacy::init_template != undef) {
 
       file { "/etc/init.d/${name}":
-        ensure  => $logstash::ensure,
-        content => template($logstash::init_template),
+        ensure  => $logstash_legacy::ensure,
+        content => template($logstash_legacy::init_template),
         owner   => 'root',
         group   => 'root',
         mode    => '0755',
@@ -140,15 +140,15 @@ define logstash::service::init{
     ensure     => $service_ensure,
     enable     => $service_enable,
     name       => $name,
-    hasstatus  => $logstash::params::service_hasstatus,
-    hasrestart => $logstash::params::service_hasrestart,
-    pattern    => $logstash::params::service_pattern,
+    hasstatus  => $logstash_legacy::params::service_hasstatus,
+    hasrestart => $logstash_legacy::params::service_hasrestart,
+    pattern    => $logstash_legacy::params::service_pattern,
     provider   => $service_provider,
   }
 
   # If any files tagged as config files for the service are changed, notify
   # the service so it restarts.
-  if $::logstash::restart_on_change {
+  if $::logstash_legacy::restart_on_change {
     File<| tag == 'logstash_config' |> ~> Service[$name]
     Logstash::Plugin<| |> ~> Service[$name]
   }
